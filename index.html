@@ -99,7 +99,7 @@
     .tilt{transform-style:preserve-3d;will-change:transform;transition:transform .12s ease}
     .tilt::after{content:"";position:absolute;inset:0;border-radius:var(--radius);background:radial-gradient(800px 200px at var(--mx,50%) var(--my,50%),rgba(201,162,75,.16),transparent 35%);opacity:.7;pointer-events:none}
     .glow-border{position:relative}
-    .glow-border::before{content:"";position:absolute;inset:-1px;border-radius:calc(var(--radius) + 1px);padding:1px;background:conic-gradient(from 180deg,rgba(201,162,75,.05),rgba(201,162,75,.35),rgba(201,162,75,.05));-webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spin 8s linear infinite}
+    .glow-border::before{$1 pointer-events:none;}
     @keyframes spin{to{transform:rotate(1turn)}}
 
     /* cursor follower (zielony listek) */
@@ -122,8 +122,10 @@
   <canvas id="bgfx" aria-hidden="true"></canvas>
   <div id="cursor-leaf" aria-hidden="true">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 12c5-5 13-5 18 0-5 5-13 5-18 0z"/>
-      <path d="M12 12c0 4-2 7-5 9"/>
+      <!-- nowy, delikatny kiełek z dwiema listkami -->
+      <path d="M12 22V12"/>
+      <path d="M12 12c-4 0-7-3-7-7 4 0 7 3 7 7z"/>
+      <path d="M12 12c0-4 3-7 7-7 0 4-3 7-7 7z"/>
     </svg>
   </div>
 
