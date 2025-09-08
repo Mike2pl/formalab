@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FORMA‑LAB — Dietetyka online i (wkrótce) Fitness</title>
+  <meta name="description" content="Konsultacje dietetyczne online, indywidualne plany, diety specjalistyczne i (wkrótce) zajęcia fitness w Warszawie. Premium, nowoczesny design." />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0a0a0a;            /* tło */
+      --bg-soft:#0f0f0f;        /* miękki odcień */
+      --gold:#c9a24b;           /* matowe, metaliczne złoto */
+      --gold-deep:#9a7b2f;      /* ciemniejsze złoto */
+      --text:#f1f4f8;           /* główny tekst */
+      --muted:#9ba7b8;          /* opis */
+      --radius:18px;            /* promień kart */
+      --shadow:0 14px 42px rgba(0,0,0,.45);
+      --leaf:#4caf50;           /* zielony listek */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:'Poppins',system-ui,Segoe UI,Roboto,Arial;color:var(--text);background:var(--bg);overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    .container{width:min(1200px,92%);margin-inline:auto}
+
+    /* ====== BACKGROUND LAYER (ZA STRONĄ) ====== */
+    .bg-gradient{position:fixed;inset:-20vmax;z-index:-3;pointer-events:none;filter:saturate(110%);
+      background:
+        radial-gradient(60vmax 60vmax at 10% 15%, rgba(201,162,75,.12), transparent 60%),
+        radial-gradient(70vmax 70vmax at 90% 10%, rgba(255,255,255,.06), transparent 60%),
+        linear-gradient(120deg,#070707,#0a0a0a 45%,#0c0c0c 75%,#070707);
+      animation:bg-drift 20s ease-in-out infinite alternate}
+    @keyframes bg-drift{to{transform:translate3d(2%,-2%,0) scale(1.03)}}
+    canvas#bgfx{position:fixed;inset:0;z-index:-2;pointer-events:none}
+
+    /* ====== NAV ====== */
+    header{position:sticky;top:0;z-index:30;background:rgba(0,0,0,.5);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,162,75,.18)}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand h1{font-family:'Playfair Display',serif;font-weight:700;letter-spacing:.06em;font-size:1.3rem;color:var(--gold)}
+    nav a{padding:8px 14px;border-radius:999px;color:var(--muted);font-weight:500}
+    nav a:hover{color:var(--text);background:rgba(201,162,75,.12);box-shadow:inset 0 0 0 1px rgba(201,162,75,.35)}
+
+    /* ====== HERO ====== */
+    .hero{position:relative;padding:100px 0 80px;text-align:center}
+    .eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.25em;font-weight:700;font-size:.8rem}
+    .headline{font-family:'Playfair Display',serif;font-size:clamp(2.6rem,5.4vw,4.2rem);line-height:1.06;margin:12px auto;max-width:18ch}
+    .sub{max-width:62ch;margin:14px auto 26px;color:var(--muted)}
+    .cta{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+    .btn{padding:14px 22px;border-radius:999px;font-weight:700;letter-spacing:.3px;position:relative;overflow:hidden;transition:transform .18s ease, box-shadow .18s ease}
+    .btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-deep));color:#0a0a0a;box-shadow:0 12px 30px rgba(201,162,75,.45)}
+    .btn-gold:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);transform:translateX(-120%) skewX(-15deg);transition:transform .6s}
+    .btn-gold:hover:after{transform:translateX(120%) skewX(-15deg)}
+    .btn-ghost{color:var(--text);border:1px solid rgba(201,162,75,.45);background:linear-gradient(180deg,rgba(201,162,75,.10),rgba(201,162,75,.05))}
+    .btn:hover{transform:translateY(-2px)}
+
+    /* ====== GRID, CARDS ====== */
+    .section{padding:72px 0}
+    .grid-12{display:grid;grid-template-columns:repeat(12,1fr);gap:22px}
+    .card{grid-column:span 4;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015));border:1px solid rgba(201,162,75,.22);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)}
+    .card h3{margin:6px 0 8px;color:var(--gold);font-family:'Playfair Display',serif}
+    .card p{margin:0;color:var(--muted)}
+
+    /* kalkulatory 2×2 */
+    .calcs{display:grid;grid-template-columns:repeat(12,1fr);gap:22px}
+    .calc{grid-column:span 6;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01));border:1px solid rgba(201,162,75,.28);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+    .calc h3{margin:0 0 10px;color:var(--gold)}
+    .calc p{margin:0 0 12px;color:var(--muted)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+    .row-1{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}
+    label{font-size:.85rem;color:var(--muted);display:block;margin-bottom:6px}
+    input,select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(201,162,75,.35);background:#0e0e0e;color:var(--text);outline:none}
+    input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(201,162,75,.25),0 0 18px rgba(201,162,75,.22);border-color:var(--gold)}
+    .result{margin-top:10px;padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(201,162,75,.10),rgba(201,162,75,.04));border:1px solid rgba(201,162,75,.28)}
+    .result strong{color:var(--gold)}
+
+    /* kontakt & faq */
+    .contact{padding:72px 0}
+    .contact .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+    .contact form{background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01));border:1px solid rgba(201,162,75,.28);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
+    .consent{display:flex;gap:10px;align-items:flex-start;color:var(--muted);font-size:.9rem}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .form-actions{display:flex;gap:12px;align-items:center;margin-top:10px}
+    .form-note{color:var(--muted);font-size:.9rem}
+    .success{border:1px solid rgba(111,207,151,.35);background:linear-gradient(180deg,rgba(111,207,151,.12),rgba(111,207,151,.05));color:#b7ffcc;border-radius:12px;padding:10px;display:none}
+
+    .faq{padding:72px 0}
+    .accordion{border:1px solid rgba(201,162,75,.28);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);background:linear-gradient(180deg,rgba(201,162,75,.08),rgba(201,162,75,.02))}
+    .acc-item + .acc-item{border-top:1px solid rgba(201,162,75,.18)}
+    .acc-q{width:100%;text-align:left;background:transparent;color:var(--gold);padding:18px 22px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+    .acc-q:hover{background:rgba(201,162,75,.08)}
+    .acc-a{max-height:0;overflow:hidden;transition:max-height .4s ease;padding:0 22px;color:var(--muted)}
+    .acc-a.open{padding:14px 22px}
+
+    /* efekty: reveal + 3D tilt + koniczna ramka */
+    .reveal{opacity:0;transform:translateY(22px) scale(.98);transition:opacity .6s ease,transform .6s ease}
+    .reveal.visible{opacity:1;transform:none}
+    .tilt{transform-style:preserve-3d;will-change:transform;transition:transform .12s ease}
+    .tilt::after{content:"";position:absolute;inset:0;border-radius:var(--radius);background:radial-gradient(800px 200px at var(--mx,50%) var(--my,50%),rgba(201,162,75,.16),transparent 35%);opacity:.7;pointer-events:none}
+    .glow-border{position:relative}
+    .glow-border::before{content:"";position:absolute;inset:-1px;border-radius:calc(var(--radius) + 1px);padding:1px;background:conic-gradient(from 180deg,rgba(201,162,75,.05),rgba(201,162,75,.35),rgba(201,162,75,.05));-webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spin 8s linear infinite}
+    @keyframes spin{to{transform:rotate(1turn)}}
+
+    /* cursor follower (zielony listek) */
+    #cursor-leaf{position:fixed;inset:auto;top:0;left:0;transform:translate(-50%,-50%);width:28px;height:28px;z-index:50;pointer-events:none;opacity:.9;filter:drop-shadow(0 0 6px rgba(76,175,80,.4))}
+    #cursor-leaf svg{width:28px;height:28px;display:block;color:var(--leaf)}
+
+    footer{border-top:1px solid rgba(201,162,75,.22);padding:30px 0 60px;color:var(--muted);text-align:center}
+
+    @media (max-width: 960px){
+      .card{grid-column:span 12}
+      .calc{grid-column:span 12}
+      .row{grid-template-columns:1fr}
+      .contact .grid, .form-row{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <!-- BACKGROUND BEHIND ALL CONTENT -->
+  <div class="bg-gradient" aria-hidden="true"></div>
+  <canvas id="bgfx" aria-hidden="true"></canvas>
+  <div id="cursor-leaf" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 12c5-5 13-5 18 0-5 5-13 5-18 0z"/>
+      <path d="M12 12c0 4-2 7-5 9"/>
+    </svg>
+  </div>
+
+  <!-- NAV -->
+  <header>
+    <div class="container nav">
+      <div class="brand"><h1>FORMA‑LAB</h1></div>
+      <nav>
+        <a href="#uslugi">Usługi</a>
+        <a href="#kalkulatory">Kalkulatory</a>
+        <a href="https://booksy.com/pl-pl/310779_forma-lab_zdrowie_3_warszawa#ba_s=seo" target="_blank" rel="noopener">Rezerwacja</a>
+        <a href="#kontakt">Kontakt</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero container">
+    <div class="eyebrow">Twoja droga do zdrowego stylu życia</div>
+    <h2 class="headline">zaczyna się TUTAJ!</h2>
+    <p class="sub">Indywidualne plany dietetyczne, konsultacje online oraz (wkrótce) zajęcia fitness w Warszawie. Premium podejście łączące żywienie i ruch — dla trwałych efektów.</p>
+    <div class="cta">
+      <a class="btn btn-gold" href="https://booksy.com/pl-pl/310779_forma-lab_zdrowie_3_warszawa#ba_s=seo" target="_blank" rel="noopener">Zarezerwuj konsultację</a>
+      <a class="btn btn-ghost" href="#uslugi">Zobacz ofertę</a>
+    </div>
+  </section>
+
+  <!-- USŁUGI -->
+  <section id="uslugi" class="section container">
+    <div class="grid-12 reveal">
+      <article class="card glow-border tilt">
+        <h3>Konsultacja dietetyczna — BASIC</h3>
+        <p>1h · 99 zł</p>
+        <p style="margin-top:6px">Pierwszy krok: omówimy cele, codzienność i wybierzemy łatwe zmiany „na już”.</p>
+      </article>
+      <article class="card glow-border tilt">
+        <h3>Konsultacja — STANDARD</h3>
+        <p>1h · 149 zł</p>
+        <p style="margin-top:6px">Szczegółowy plan, wskazówki zakupowe i wsparcie w organizacji posiłków.</p>
+      </article>
+      <article class="card glow-border tilt">
+        <h3>Konsultacja — PREMIUM</h3>
+        <p>1h · 199 zł</p>
+        <p style="margin-top:6px">Najbardziej rozbudowana konsultacja + rekomendacje dopasowane do Twojej rutyny.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- KALKULATORY (2×2) -->
+  <section id="kalkulatory" class="section container">
+    <h2 class="headline" style="font-size:clamp(2rem,4.6vw,3rem);text-align:center">Kalkulatory dietetyczne</h2>
+    <p class="sub" style="text-align:center;margin-bottom:24px">Przelicz BMI, BMR/TDEE, dzienny cel z makroskładnikami i wskaźnik WHR. Uzupełnij pola — zobaczysz wynik i krótką poradę.</p>
+
+    <div class="calcs">
+      <!-- BMI -->
+      <div class="calc glow-border tilt reveal" id="calc-bmi">
+        <h3>BMI — wskaźnik masy ciała</h3>
+        <p>Podaj wzrost i masę ciała. Otrzymasz wynik, zakres i sugestię kolejnych kroków.</p>
+        <div class="row">
+          <div>
+            <label for="bmi-h">Wzrost (cm)</label>
+            <input type="number" id="bmi-h" placeholder="np. 170" min="80" max="250">
+          </div>
+          <div>
+            <label for="bmi-w">Masa (kg)</label>
+            <input type="number" id="bmi-w" placeholder="np. 68" min="20" max="300">
+          </div>
+        </div>
+        <div class="result" id="bmi-out">Wpisz swoje dane, a pokażemy <strong>BMI</strong>, zakres i <strong>personalną wskazówkę</strong>.</div>
+      </div>
+
+      <!-- BMR/TDEE -->
+      <div class="calc glow-border tilt reveal" id="calc-bmr">
+        <h3>BMR &amp; TDEE — zapotrzebowanie</h3>
+        <p>BMR wg Mifflin–St Jeor + TDEE zależne od aktywności. To baza do układania planu.</p>
+        <div class="row">
+          <div>
+            <label for="sex">Płeć</label>
+            <select id="sex">
+              <option value="female">Kobieta</option>
+              <option value="male">Mężczyzna</option>
+            </select>
+          </div>
+          <div>
+            <label for="age">Wiek</label>
+            <input type="number" id="age" placeholder="np. 30" min="10" max="100">
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="height">Wzrost (cm)</label>
+            <input type="number" id="height" placeholder="np. 170" min="80" max="250">
+          </div>
+          <div>
+            <label for="weight">Masa (kg)</label>
+            <input type="number" id="weight" placeholder="np. 68" min="20" max="300">
+          </div>
+        </div>
+        <div class="row-1">
+          <div>
+            <label for="activity">Aktywność</label>
+            <select id="activity">
+              <option value="1.2">Niska (1–2 treningi/tydz.)</option>
+              <option value="1.375">Lekka (3 treningi/tydz.)</option>
+              <option value="1.55">Średnia (3–5 treningów/tydz.)</option>
+              <option value="1.725">Wysoka (6–7 treningów/tydz.)</option>
+              <option value="1.9">Bardzo wysoka (2× dziennie)</option>
+            </select>
+          </div>
+        </div>
+        <div class="result" id="bmr-out">Uzupełnij pola, a pokażemy <strong>BMR / TDEE</strong> i damy wskazówkę, jak dobrać kalorie do celu.</div>
+      </div>
+
+      <!-- Cel i makro -->
+      <div class="calc glow-border tilt reveal" id="calc-goal">
+        <h3>Dzienne kalorie + makroskładniki</h3>
+        <p>Wybierz cel i zobacz kalorie z podziałem na białko/tłuszcze/węglowodany.</p>
+        <div class="row">
+          <div>
+            <label for="tdee2">TDEE (kcal)</label>
+            <input type="number" id="tdee2" placeholder="np. 2300" min="800" max="6000">
+          </div>
+          <div>
+            <label for="goal">Cel</label>
+            <select id="goal">
+              <option value="-0.15">Redukcja (~‑15%)</option>
+              <option value="0">Utrzymanie</option>
+              <option value="0.10">Masa (+10%)</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="bw">Masa ciała (kg) — do białka</label>
+            <input type="number" id="bw" placeholder="np. 68" min="20" max="300">
+          </div>
+          <div>
+            <label for="proteinFactor">Białko (g/kg)</label>
+            <select id="proteinFactor">
+              <option value="1.6">1.6 g/kg</option>
+              <option value="1.8" selected>1.8 g/kg</option>
+              <option value="2.0">2.0 g/kg</option>
+            </select>
+          </div>
+        </div>
+        <div class="result" id="goal-out">Podaj TDEE i masę — pokażemy kalorie i <strong>makro</strong> + krótką podpowiedź, jak rozłożyć posiłki.</div>
+      </div>
+
+      <!-- WHR -->
+      <div class="calc glow-border tilt reveal" id="calc-whr">
+        <h3>WHR — talia do bioder</h3>
+        <p>Wskaźnik rozmieszczenia tkanki tłuszczowej. Przydatny u osób o „normalnym” BMI.</p>
+        <div class="row">
+          <div>
+            <label for="waist">Talia (cm)</label>
+            <input type="number" id="waist" placeholder="np. 72" min="40" max="160">
+          </div>
+          <div>
+            <label for="hips">Biodra (cm)</label>
+            <input type="number" id="hips" placeholder="np. 98" min="50" max="170">
+          </div>
+        </div>
+        <div class="row-1">
+          <div>
+            <label for="sex2">Płeć</label>
+            <select id="sex2">
+              <option value="female">Kobieta</option>
+              <option value="male">Mężczyzna</option>
+            </select>
+          </div>
+        </div>
+        <div class="result" id="whr-out">Podaj obwody — pokażemy <strong>WHR</strong> i czy mieści się w zakresie zdrowia metabolicznego.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="kontakt" class="contact container">
+    <h2 class="headline" style="font-size:clamp(1.8rem,4vw,2.4rem);text-align:center">Skontaktuj się z nami</h2>
+    <p class="sub" style="text-align:center;margin-bottom:24px">Masz pytania? Napisz — odpowiemy w 24h. Jeśli wolisz, zarezerwuj termin przez Booksy.</p>
+    <div class="grid">
+      <div>
+        <form id="contact-form" novalidate>
+          <div class="form-row">
+            <div>
+              <label for="name">Imię i nazwisko</label>
+              <input id="name" required placeholder="np. Anna Kowalska">
+            </div>
+            <div>
+              <label for="email">E‑mail</label>
+              <input id="email" type="email" required placeholder="np. anna@example.com">
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label for="phone">Telefon (opcjonalnie)</label>
+              <input id="phone" type="tel" placeholder="np. 600 000 000">
+            </div>
+            <div>
+              <label for="topic">Temat</label>
+              <input id="topic" placeholder="np. Plan na redukcję">
+            </div>
+          </div>
+          <div>
+            <label for="msg">Wiadomość</label>
+            <textarea id="msg" required placeholder="Napisz kilka zdań o swoim celu i stylu życia…"></textarea>
+          </div>
+          <label class="consent"><input type="checkbox" id="consent" required> Wyrażam zgodę na kontakt w sprawie mojej wiadomości. Dane nie będą udostępniane osobom trzecim.</label>
+          <div class="form-actions">
+            <button class="btn btn-gold" type="submit">Wyślij wiadomość</button>
+            <div class="form-note">lub <a class="btn btn-ghost" href="https://booksy.com/pl-pl/310779_forma-lab_zdrowie_3_warszawa#ba_s=seo" target="_blank" rel="noopener">zarezerwuj przez Booksy</a></div>
+          </div>
+          <div id="form-ok" class="success" role="status">Dziękujemy! Wiadomość została wysłana. Odezwiemy się na podany adres.</div>
+        </form>
+      </div>
+      <div>
+        <div class="card glow-border">
+          <h3>Kontakt</h3>
+          <p style="margin-top:6px">E‑mail: kontakt@forma-lab.pl<br>Warszawa (zajęcia stacjonarne już wkrótce)<br>Online w całej Polsce</p>
+          <p style="margin-top:12px;color:var(--muted)">Godziny odpowiedzi: pon.–pt. 9:00–18:00</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="faq container">
+    <h2 class="headline" style="font-size:clamp(1.8rem,4vw,2.4rem);text-align:center">FAQ — najczęstsze pytania</h2>
+    <div class="accordion" role="tablist">
+      <div class="acc-item">
+        <button class="acc-q" aria-expanded="false">Jak wygląda pierwsza konsultacja? <span>+</span></button>
+        <div class="acc-a">Zaczynamy od wywiadu zdrowotnego i celów. Analizujemy dotychczasowe nawyki i proponujemy 2–3 realne zmiany „na start”.</div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q" aria-expanded="false">Czy plan jest dopasowany do nietolerancji / chorób? <span>+</span></button>
+        <div class="acc-a">Tak. Plany uwzględniają wyniki badań i ograniczenia (np. IO, PCOS, tarczyca, nietolerancje). Dobieramy zamienniki i układ posiłków.</div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q" aria-expanded="false">Ile czasu potrzeba, by zobaczyć efekty? <span>+</span></button>
+        <div class="acc-a">Pierwsze zmiany energii i samopoczucia często widać po 7–14 dniach. Spadek masy w zdrowym tempie to średnio 0.3–0.8 kg/tydz.</div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-q" aria-expanded="false">Czy mogę trenować dowolnie? <span>+</span></button>
+        <div class="acc-a">Tak — plan żywieniowy dopasujemy do Twojej aktywności. Gdy wystartują zajęcia fitness w Warszawie, pomożemy połączyć oba obszary.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="container">
+    <p>© <span id="year"></span> FORMA‑LAB • kontakt@forma-lab.pl</p>
+  </footer>
+
+  <script>
+    // Rok w stopce
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // ====== GOLD PARTICLES BACKGROUND ======
+    (function(){
+      const canvas = document.getElementById('bgfx');
+      const ctx = canvas.getContext('2d');
+      let W,H, P=[], mouse={x:0,y:0};
+      function resize(){ W=canvas.width=innerWidth; H=canvas.height=innerHeight; const N=Math.min(220, Math.floor(W*H/18000)); P=Array.from({length:N},()=>({
+        x:Math.random()*W, y:Math.random()*H, r:Math.random()*2+0.5,
+        dx:(Math.random()-.5)*0.35, dy:(Math.random()-.5)*0.35, o:Math.random()*0.5+0.5
+      })); }
+      function draw(){ ctx.clearRect(0,0,W,H);
+        P.forEach(p=>{
+          const vx = p.dx + (mouse.x - W/2)*0.00002; 
+          const vy = p.dy + (mouse.y - H/2)*0.00002;
+          p.x += vx; p.y += vy;
+          if(p.x<0) p.x=W; if(p.x>W) p.x=0; if(p.y<0) p.y=H; if(p.y>H) p.y=0;
+          const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*7);
+          g.addColorStop(0,`rgba(201,162,75,${p.o})`);
+          g.addColorStop(1,'rgba(201,162,75,0)');
+          ctx.fillStyle=g; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*7,0,Math.PI*2); ctx.fill();
+        });
+        requestAnimationFrame(draw);
+      }
+      addEventListener('resize',resize); resize(); draw();
+      addEventListener('mousemove',e=>{ mouse.x=e.clientX; mouse.y=e.clientY; });
+    })();
+
+    // ====== SCROLL REVEAL ======
+    (function(){ const els=[...document.querySelectorAll('.reveal')]; const io=new IntersectionObserver((e)=>{
+      e.forEach(v=>{ if(v.isIntersecting){ v.target.classList.add('visible'); io.unobserve(v.target);} });
+    },{threshold:.18}); els.forEach(el=>io.observe(el)); })();
+
+    // ====== 3D TILT + MAGNETIC BTNS ======
+    (function(){
+      const tiltEls=document.querySelectorAll('.tilt');
+      tiltEls.forEach(el=>{
+        el.addEventListener('mousemove',(e)=>{ const r=el.getBoundingClientRect(); const mx=e.clientX-r.left, my=e.clientY-r.top; const rx=((my/r.height)-.5)*-6; const ry=((mx/r.width)-.5)*6; el.style.setProperty('--mx',(mx/r.width*100)+'%'); el.style.setProperty('--my',(my/r.height*100)+'%'); el.style.transform=`perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg)`; });
+        el.addEventListener('mouseleave',()=>{ el.style.transform=''; });
+      });
+      document.querySelectorAll('.btn').forEach(b=>{
+        b.addEventListener('mousemove',(e)=>{ const r=b.getBoundingClientRect(); const x=e.clientX-r.left, y=e.clientY-r.top; b.style.transform=`translate(${(x-r.width/2)*.02}px, ${(y-r.height/2)*.02}px)`; });
+        b.addEventListener('mouseleave',()=>{ b.style.transform=''; });
+      });
+    })();
+
+    // ====== KALKULATORY ======
+    const $ = (id)=>document.getElementById(id);
+    function pop(el){ if(!el) return; el.style.transform='translateY(-3px)'; el.style.opacity='0.95'; setTimeout(()=>{ el.style.transform=''; el.style.opacity='1'; },220); }
+
+    // BMI
+    function bmiCategory(x){ if(!isFinite(x)) return '-'; if(x<18.5) return 'niedowaga'; if(x<25) return 'norma'; if(x<30) return 'nadwaga'; return 'otyłość'; }
+    function bmiAdvice(cat){
+      switch(cat){
+        case 'niedowaga': return 'Zwiększ kaloryczność o ~10–15% i dodaj 1–2 przekąski białkowo‑węglowodanowe.';
+        case 'norma': return 'Utrzymuj bilans, celuj w 0.8–1.8 g białka/kg i ~7–10k kroków dziennie.';
+        case 'nadwaga': return 'Rozważ deficyt ~15% i 3 treningi/tydz. Zadbaj o 25–30 g białka na posiłek.';
+        default: return 'Skup się na deficycie 15–20% i codziennej aktywności. Rozważ konsultację z dietetykiem.';
+      }
+    }
+    function calcBMI(){
+      const h=parseFloat($('bmi-h').value); const w=parseFloat($('bmi-w').value);
+      const out=$('bmi-out'); if(!(h>0&&w>0)){ out.textContent='Uzupełnij wzrost i masę — pokażemy BMI i poradę.'; return; }
+      const bmi=w/Math.pow(h/100,2); const cat=bmiCategory(bmi);
+      out.innerHTML=`BMI: <strong>${bmi.toFixed(1)}</strong> — ${cat}. <br><em>Wskazówka:</em> ${bmiAdvice(cat)}`; pop(out);
+    }
+    ['bmi-h','bmi-w'].forEach(id=>$(id).addEventListener('input',calcBMI));
+
+    // BMR/TDEE
+    function calcBMR(){
+      const sex=$('sex').value; const age=parseFloat($('age').value); const h=parseFloat($('height').value); const w=parseFloat($('weight').value); const act=parseFloat($('activity').value||'1');
+      const out=$('bmr-out'); if(![age,h,w].every(v=>v>0)){ out.textContent='Uzupełnij dane — policzymy BMR/TDEE i damy wskazówkę.'; return; }
+      const bmr = sex==='male' ? (10*w + 6.25*h - 5*age + 5) : (10*w + 6.25*h - 5*age - 161);
+      const tdee = bmr * act;
+      out.innerHTML=`BMR: <strong>${Math.round(bmr)}</strong> kcal/d · TDEE: <strong>${Math.round(tdee)}</strong> kcal/d.<br><em>Wskazówka:</em> Zacznij od deficytu/nadwyżki 10–15% i obserwuj zmianę wagi przez 2 tygodnie.`; pop(out);
+      // podaj dalej
+      $('tdee2').value = Math.round(tdee);
+      if(!$('bw').value && w>0) $('bw').value = w;
+    }
+    ['sex','age','height','weight','activity'].forEach(id=>$(id).addEventListener('input',calcBMR));
+
+    // Cel + makra
+    function calcGoal(){
+      const tdee=parseFloat($('tdee2').value); const goal=parseFloat($('goal').value); const bw=parseFloat($('bw').value); const pf=parseFloat($('proteinFactor').value);
+      const out=$('goal-out'); if(!isFinite(tdee)){ out.textContent='Najpierw podaj TDEE (lub policz obok).'; return; }
+      const kcals = Math.round(tdee*(1+(isFinite(goal)?goal:0)));
+      const protein_g = isFinite(bw)? Math.round(bw*(isFinite(pf)?pf:1.8)) : Math.round(1.8* (tdee/24) / 10); // fallback, gdy brak masy
+      const protein_kcal = protein_g*4; const fat_kcal = Math.round(kcals*0.30); const fat_g = Math.round(fat_kcal/9);
+      const carbs_kcal = Math.max(0, kcals - protein_kcal - fat_kcal); const carbs_g = Math.round(carbs_kcal/4);
+      out.innerHTML = `Kalorie: <strong>${kcals}</strong> kcal/d<br>Białko: <strong>${protein_g}</strong> g · Tłuszcze: <strong>${fat_g}</strong> g · Węglowodany: <strong>${carbs_g}</strong> g.<br><em>Wskazówka:</em> Podziel kalorie na 3–5 posiłków, a białko na równe porcje.`; pop(out);
+    }
+    ['tdee2','goal','bw','proteinFactor'].forEach(id=>$(id).addEventListener('input',calcGoal));
+
+    // WHR
+    function whrCategory(sex, whr){ if(sex==='male') return whr<=0.9? 'prawidłowy' : whr<=1.0? 'podwyższony' : 'wysokie ryzyko'; return whr<=0.8? 'prawidłowy' : whr<=0.85? 'podwyższony' : 'wysokie ryzyko'; }
+    function calcWHR(){
+      const waist=parseFloat($('waist').value); const hips=parseFloat($('hips').value); const sex=$('sex2').value; const out=$('whr-out');
+      if(!(waist>0&&hips>0)){ out.textContent='Podaj talię i biodra — pokażemy WHR i zakres.'; return; }
+      const whr = +(waist/hips).toFixed(2); const cat = whrCategory(sex, whr);
+      out.innerHTML = `WHR: <strong>${whr}</strong> — ${cat}.<br><em>Wskazówka:</em> Skup się na objętości warzyw i spacerach po posiłku (10–15 min).`; pop(out);
+    }
+    ['waist','hips','sex2'].forEach(id=>$(id).addEventListener('input',calcWHR));
+
+    // CONTACT FORM (front‑end demo)
+    (function(){
+      const f=document.getElementById('contact-form'); if(!f) return;
+      f.addEventListener('submit',function(e){ e.preventDefault(); const ok=document.getElementById('form-ok'); if(ok){ ok.style.display='block'; ok.scrollIntoView({behavior:'smooth',block:'center'}); }
+        f.reset(); });
+    })();
+
+    // FAQ accordion
+    (function(){
+      document.querySelectorAll('.acc-q').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          const ans=btn.parentElement.querySelector('.acc-a');
+          const isOpen=btn.getAttribute('aria-expanded')==='true';
+          btn.setAttribute('aria-expanded', String(!isOpen));
+          if(!isOpen){ ans.classList.add('open'); ans.style.maxHeight = ans.scrollHeight + 'px'; btn.querySelector('span').textContent='–'; }
+          else { ans.style.maxHeight = 0; ans.classList.remove('open'); btn.querySelector('span').textContent='+'; }
+        });
+      });
+    })();
+
+    // Cursor follower (leaf) with easing
+    (function(){
+      const leaf=document.getElementById('cursor-leaf'); if(!leaf) return;
+      let tx=0, ty=0, x=0, y=0; const ease=0.15; let raf;
+      function loop(){ x += (tx - x)*ease; y += (ty - y)*ease; leaf.style.transform=`translate(${x}px, ${y}px) translate(-50%,-50%)`; raf=requestAnimationFrame(loop); }
+      window.addEventListener('mousemove', (e)=>{ tx=e.clientX; ty=e.clientY; if(!raf) loop(); });
+      window.addEventListener('mouseleave', ()=>{ cancelAnimationFrame(raf); raf=null; });
+    })();
+  </script>
+</body>
+</html>
